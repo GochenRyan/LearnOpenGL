@@ -8,7 +8,7 @@
 #include <vector>
 
 // Defines several possible options for camera movement.
-enum Cmera_Movement {
+enum Camera_Movement {
 	FORWARD,
 	BACKWARD,
 	LEFT,
@@ -58,12 +58,12 @@ public:
 		return lookAt(Position, Position + Front, Up);
 	}
 
-	void ProcessKeyboard(Cmera_Movement direction, float delatTime) {
+	void ProcessKeyboard(Camera_Movement direction, float delatTime) {
 		float velocity = MovementSpeed * delatTime;
 		if (direction == FORWARD)
-			Position += glm::vec3(Front.x, 0, Front.z) * velocity;
+			Position += glm::vec3(Front.x, Front.y, Front.z) * velocity;
 		if (direction == BACKWARD)
-			Position -= glm::vec3(Front.x, 0, Front.z) * velocity;
+			Position -= glm::vec3(Front.x, Front.y, Front.z) * velocity;
 		if (direction == LEFT)
 			Position -= Right * velocity;
 		if (direction == RIGHT)
@@ -95,7 +95,7 @@ public:
 		if (Zoom >= 45.0f)
 			Zoom = 45.0f;
 	}
-	
+
 private:
 	void updateCameraVectors() {
 		glm::vec3 front;
@@ -116,27 +116,18 @@ private:
 		glm::mat4 translation = glm::mat4(1.0f);
 		glm::mat4 rotation = glm::mat4(1.0f);
 
-		for (int i = 0; i < 4; ++i) {
-			for (int j = 0; j < 4; ++j) {
-				std::cout << translation[i][j] << ' ';
-			}
-			std::cout << std::endl;
-		}
-
 		translation[3][0] = -position.x;
 		translation[3][1] = -position.y;
 		translation[3][2] = -position.z;
-		
-		rotation[0][0] = xaxis.x;
-		rotation[0][1] = xaxis.y;
-		rotation[0][2] = xaxis.z;
 
-		rotation[1][0] = yaxis.x;
+		rotation[0][0] = xaxis.x; // First column, first row
+		rotation[1][0] = xaxis.y;
+		rotation[2][0] = xaxis.z;
+		rotation[0][1] = yaxis.x; // First column, second row
 		rotation[1][1] = yaxis.y;
-		rotation[1][2] = yaxis.z;
-
-		rotation[2][0] = zaxis.x;
-		rotation[2][1] = zaxis.y;
+		rotation[2][1] = yaxis.z;
+		rotation[0][2] = zaxis.x; // First column, third row
+		rotation[1][2] = zaxis.y;
 		rotation[2][2] = zaxis.z;
 
 		return rotation * translation;

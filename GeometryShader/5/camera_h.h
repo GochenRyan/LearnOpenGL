@@ -8,7 +8,7 @@
 #include <vector>
 
 // Defines several possible options for camera movement.
-enum Cmera_Movement {
+enum Camera_Movement {
 	FORWARD,
 	BACKWARD,
 	LEFT,
@@ -58,7 +58,7 @@ public:
 		return lookAt(Position, Position + Front, Up);
 	}
 
-	void ProcessKeyboard(Cmera_Movement direction, float delatTime) {
+	void ProcessKeyboard(Camera_Movement direction, float delatTime) {
 		float velocity = MovementSpeed * delatTime;
 		if (direction == FORWARD)
 			Position += glm::vec3(Front.x, Front.y, Front.z) * velocity;
