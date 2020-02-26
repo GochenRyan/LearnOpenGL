@@ -13,7 +13,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-unsigned int loadTexture(const char* path);
+unsigned int loadTexture(const char* path, bool bSRGB = false);
 
 const unsigned int width = 1280;
 const unsigned int height = 720;
@@ -91,7 +91,7 @@ int main() {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
 	glBindVertexArray(0);
 
-	GLuint floorTexture = loadTexture("wood.png");
+	GLuint floorTexture = loadTexture("wood.png", true);
 	shader.use();
 	shader.setInt("texture1", 0);
 
@@ -186,7 +186,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
 	camera.ProcessMouseScroll(yoffset);
 }
 
-unsigned loadTexture(const char* path) {
+unsigned loadTexture(const char* path, bool bSRGB) {
 	unsigned int textureID;
 	glGenTextures(1, &textureID);
 	int width, height, nrComponents;
@@ -201,7 +201,12 @@ unsigned loadTexture(const char* path) {
 			format = GL_RGBA;
 
 		glBindTexture(GL_TEXTURE_2D, textureID);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		if (bSRGB) {
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		}
+		else {
+			glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		}
 		glGenerateMipmap(GL_TEXTURE_2D);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
